@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Neon Cursor Effect</title>
+    <style>
+        body {
+            margin: 0;
+            background: black;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+    <canvas id="neon-canvas"></canvas>
+
+    <script>
+        function neonCursor({
+            el,
+            shaderPoints,
+            curvePoints,
+            curveLerp,
+            radius1,
+            radius2,
+            velocityTreshold,
+            sleepRadiusX,
+            sleepRadiusY,
+            sleepTimeCoefX,
+            sleepTimeCoefY
+        }) {
+            const canvas = document.getElementById('neon-canvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            let mouse = { x: width / 2, y: height / 2, vx: 0, vy: 0 };
+            let points = [];
+
+            for (let i = 0; i < curvePoints; i++) {
+                points.push({ x: mouse.x, y: mouse.y });
+            }
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                mouse.vx = e.movementX;
+                mouse.vy = e.movementY;
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                // update points
+                points.pop();
+                points.unshift({ x: points[0].x + (mouse.x - points[0].x) * curveLerp, y: points[0].y + (mouse.y - points[0].y) * curveLerp });
+
+                // draw
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                for (let i = 1; i < points.length - 2; i++) {
+                    const xc = (points[i].x + points[i + 1].x) / 2;
+                    const yc = (points[i].y + points[i + 1].y) / 2;
+                    ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+                }
+                ctx.strokeStyle = 'rgba(0,255,255,0.5)';
+                ctx.lineWidth = 4;
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = 'cyan';
+                ctx.stroke();
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        // Call the function with your settings
+        neonCursor({
+            el: document.getElementById("app"),
+            shaderPoints: 16,
+            curvePoints: 80,
+            curveLerp: 0.5,
+            radius1: 5,
+            radius2: 30,
+            velocityTreshold: 10,
+            sleepRadiusX: 100,
+            sleepRadiusY: 100,
+            sleepTimeCoefX: 0.0025,
+            sleepTimeCoefY: 0.0025
+        });
+    </script>
+</body>
+
+</html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>js-01</title>
+</head>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 95vh;
+    }
+
+    h1 {
+        color: blue;
+    }
+</style>
+
+<body>
+    <h1>Hello js</h1>
+    <button>Click Here</button>
+
+    <script>
+        var num = 8
+        let btn = "ami"
+        const h1 = "Hello js"
+        let bolean = true
+        let dt = null
+        console.log(btn)
+        console.log(bolean)
+        console.log(h1)
+
+        let user = {
+            name: "Ellham",
+            age: 22,
+            gender: "Male",
+            homeTown: {
+                district: "Gazipur",
+                thana: "Joydevpur",
+                postOffice: "Piruzali",
+                postCode: 1703
+            },
+            fvr_Color: "white",
+            hobbey: "Playing Footbal",
+            fvr_Song: {
+                bangla: "Sesh Kanna",
+                Hindi: "Maine royaan"
+            }
+        }
+        console.log(user)
+        console.log(user["hobbey"])
+
+        let arr = ["Ellham", "hamim", "shamim vai", "sahidul vai"]
+        console.log(arr)
+
+            let x =243;
+            let y =6500;
+            let result = x*y;
+            console.log(result)
+    </script>
+
+</body>
+
+
+</html> -->
